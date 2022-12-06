@@ -43,12 +43,10 @@ void *producer(){
 
 void *consumer(){
 
-    int item;
     while (true){
         if (count_cons == 8192){ return NULL;}
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
-        item = buf[count-1];
         count --;
         count_cons ++;
         //printf("consumed %d /n  ", count_cons);

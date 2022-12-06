@@ -22,7 +22,7 @@ pthread_mutex_t mutex_readcount;
 pthread_mutex_t mutex_writecount;
 
 
-void *writer(void *arg) {
+void *writer() {
     for (int i = 0; i < 640; i++) {
         pthread_mutex_lock(&mutex_writecount);
         count_write++;
@@ -38,9 +38,10 @@ void *writer(void *arg) {
         if (count_write == 0) sem_post(&readsem);
         pthread_mutex_unlock(&mutex_writecount);
     }
+    return EXIT_SUCCESS;
 }
 
-void *reader(void *arg) {
+void *reader() {
     for (int i = 0; i < 2560; i++) {
         pthread_mutex_lock(&lock);
         sem_wait(&readsem);
@@ -58,6 +59,7 @@ void *reader(void *arg) {
         if (count_read == 0) sem_post(&writesem);
         pthread_mutex_unlock(&mutex_readcount);
     }
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[]) {
