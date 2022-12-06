@@ -11,7 +11,7 @@ pthread_t * phil;
 pthread_mutex_t  *baguette;
 
 void manger(int id){
-    printf("Philosophe [%d] mange\n", id);
+    //printf("Philosophe [%d] mange\n", id);
 }
 
 void *philosophe(void* arg){
