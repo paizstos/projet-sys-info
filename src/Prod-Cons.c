@@ -16,56 +16,69 @@ int nProducer;
 int nConsumer;
 
 pthread_mutex_t mutex;
+pthread_mutex_t consuming;
+pthread_mutex_t producing;
 sem_t empty;
 sem_t full;
 
 
 
 void *producer(){
-
     int item;
     while (true){
-        if (count_prod == 8192){ return NULL;}
-        item = rand();
+        if (item >= 8192){ 
+            return NULL;}
+        pthread_mutex_lock(&producing);
+        item = count_prod++;
+        pthread_mutex_unlock(&producing);
+        for (int i=0; i<10000; i++); //simulating producing
         sem_wait(&empty);
         pthread_mutex_lock(&mutex);
-        buf[count] = item;
+        buf[count] = rand();
         count ++;
-        count_prod ++;
-        //printf("On a produit %d objets /n  ", count_prod);
         pthread_mutex_unlock(&mutex);
         sem_post(&full);
-        for (int i=0; i<10000; i++);
     }
-
 }
 
 
 void *consumer(){
-
+    int item;
     while (true){
-        if (count_cons == 8192){ return NULL;}
+        if (item >= 8192){ 
+            return NULL;}
+        pthread_mutex_lock(&consuming);
+        item = count_cons++;
+        pthread_mutex_unlock(&consuming);
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
         count --;
-        count_cons ++;
-        //printf("consumed %d /n  ", count_cons);
         pthread_mutex_unlock(&mutex);
         sem_post(&empty);
-        for (int i=0; i<10000; i++);
+        for (int i=0; i<10000; i++); //simulating consuming
     }
 }
 
 
 int main(int argc, char *argv[]){
-
-    pthread_mutex_init (&mutex, NULL);
+    if (argc != 3) {
+        fprintf(stderr, "Two arguments are required.\n");
+        return EXIT_FAILURE;
+    }
 
     nProducer = (int) strtol(argv[1], (char **) NULL, 10);
     nConsumer = (int) strtol(argv[2], (char **) NULL, 10);
 
-	pthread_t thread_prod [nProducer];
-	pthread_t thread_cons [nConsumer];
+    if (nProducer < 1 || nConsumer < 1) {
+        fprintf(stderr, "The number of producer/consumer must be at least 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    pthread_t *thread_prod;
+    pthread_t *thread_cons;
+
+	thread_prod = (pthread_t *) malloc(sizeof(pthread_t) * nProducer);
+	thread_cons = (pthread_t *) malloc(sizeof(pthread_t) * nConsumer);
 	
     int err;
     
@@ -73,11 +86,11 @@ int main(int argc, char *argv[]){
     if (err != 0){
         fprintf(stderr,"sem_init empty");
     }
-	
+
     err = sem_init(&full, 0, 0);
     if (err != 0){
         fprintf(stderr,"sem_init full");
-    }
+    }  
 
     for (int i = 0; i < nProducer; i++){
         err = pthread_create(&(thread_prod[i]), NULL, producer, NULL);
@@ -117,6 +130,13 @@ int main(int argc, char *argv[]){
         fprintf(stderr,"sem_destroy_full");
     }
 
-    return(EXIT_SUCCESS);
+    pthread_mutex_destroy(&mutex);
+    pthread_mutex_destroy(&consuming);
+    pthread_mutex_destroy(&producing);
 
+    free(thread_cons);
+    free(thread_prod);
+
+
+    return(EXIT_SUCCESS);
 }

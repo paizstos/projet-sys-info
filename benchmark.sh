@@ -20,7 +20,7 @@ for file in $@; do
 
     array=("2" "4" "8" "16" "32" "64")
 
-    if [ ${file} -eq "Philosophe" ]; then
+    if [ ${file} = "Philosophe" ]; then
         for NTHREADS in ${array[@]}; do
             for I in {1..5}; do
                 TIME=`/usr/bin/time -a -f %e -o /dev/stdout ./${file} ${NTHREADS}`
