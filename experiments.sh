@@ -38,3 +38,13 @@ for file in $@; do
     fi
 
 done
+
+sleep 4
+
+if [ ! -d plots ]; then 
+    mkdir plots
+fi
+
+for file in $(pwd)/benchmarks/*; do
+    python3 plots.py $file
+done
