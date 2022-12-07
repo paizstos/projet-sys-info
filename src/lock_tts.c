@@ -10,7 +10,7 @@ int l;
 
 void *process(){
     for (int i = 0; i < 6400/N; i++){
-        lock(&l);
+        lock_tts(&l);
         for (int j = 0; j < 100000; j++); //simulate processing
         unlock(&l);
     }

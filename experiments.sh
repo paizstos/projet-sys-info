@@ -20,7 +20,7 @@ for file in $@; do
 
     echo "Running benchmark on $file"
 
-    if [[ $file == "dst/Philosophe" || $file == "dst/lock_test" ]]; then
+    if [ $file == "dst/Philosophe" -o "dst/lock_ts" -o "dst/lock_tts" ]; then
         array=("1" "2" "4" "8" "16" "32" "64")
         for NTHREADS in ${array[@]}; do
             for I in {1..5}; do
