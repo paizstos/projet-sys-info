@@ -18,9 +18,10 @@ for file in $@; do
     touch $out_path
     echo "nthreads,seconds" > $out_path
 
-    array=("2" "4" "8" "16" "32" "64")
+    echo "Running benchmark on $file"
 
-    if [ ${file} = "Philosophe" ]; then
+    if [[ $file == "dst/Philosophe" || $file == "dst/lock_test" ]]; then
+        array=("1" "2" "4" "8" "16" "32" "64")
         for NTHREADS in ${array[@]}; do
             for I in {1..5}; do
                 TIME=`/usr/bin/time -a -f %e -o /dev/stdout ./${file} ${NTHREADS}`
@@ -28,6 +29,7 @@ for file in $@; do
             done
         done
     else
+        array=("2" "4" "8" "16" "32" "64")
         for NTHREADS in ${array[@]}; do
             NTHREADSDIV=${NTHREADS}/2
             for I in {1..5}; do
@@ -36,10 +38,9 @@ for file in $@; do
             done
         done
     fi
-
 done
 
-sleep 4
+sleep 20
 
 if [ ! -d plots ]; then 
     mkdir plots

@@ -10,15 +10,13 @@ int nPhilo;
 pthread_t * phil;
 pthread_mutex_t  *baguette;
 
-void manger(int id){
-    //printf("Philosophe [%d] mange\n", id);
-}
-
 void *philosophe(void* arg){
     int id = *(int*) arg;
     free(arg);
     int left = id;
-    int right = (left + 1) % nPhilo;
+    int right;
+    if (nPhilo == 1) right = 1;
+    else right = (left + 1) % nPhilo;
     for (int i=0; i<100000; i++){
         if(left < right){
             pthread_mutex_lock(&baguette[left]);
@@ -29,7 +27,6 @@ void *philosophe(void* arg){
             pthread_mutex_lock(&baguette[left]);
 
         }
-        manger(id);
         pthread_mutex_unlock(&baguette[left]);
         pthread_mutex_unlock(&baguette[right]);
     }

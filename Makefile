@@ -13,11 +13,12 @@ CFLAGS=-Wall -Werror
 ##
 ## ---------------------------------------------------------------------------------------------------------
 
-all: dst/Philosophe dst/Prod-Cons dst/Readers-Writers # Compile all the .c files present in folder /src
+all: dst/Philosophe dst/Prod-Cons dst/Readers-Writers dst/lock_test # Compile all the .c files present in folder /src
 
 dst/%: src/%.c
 	if [ ! -d dst ]; then mkdir dst; fi
 	$(CC) $(CFLAGS) -o $@ $^ -lpthread
+ 
 
 .PHONY: clean all experiments
 clean: # Delete all compiled files with the /dst folder and the content of folders benchmarks and plots
